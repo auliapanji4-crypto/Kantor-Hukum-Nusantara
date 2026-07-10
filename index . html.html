@@ -1,0 +1,809 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Nusantara — Kantor Hukum</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,400;0,9..144,500;0,9..144,600;1,9..144,500&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --black: #0A0E0C;
+    --black-soft: #10160F;
+    --green-deep: #123227;
+    --green-mid: #2B6E4F;
+    --green-bright: #5FBE8C;
+    --gold: #C7A24C;
+    --paper: #EAEEE5;
+    --paper-line: #D6DCCB;
+    --ink: #12180F;
+    --text-light: #E9EEE5;
+    --text-muted: rgba(233,238,229,0.66);
+    --ink-muted: rgba(18,24,15,0.62);
+    --radius: 4px;
+    --max: 1180px;
+  }
+
+  *{box-sizing:border-box;}
+  html{scroll-behavior:smooth;}
+  @media (prefers-reduced-motion: reduce){
+    html{scroll-behavior:auto;}
+    *{animation-duration:0.001ms !important; transition-duration:0.001ms !important;}
+  }
+
+  body{
+    margin:0;
+    background:var(--black);
+    color:var(--text-light);
+    font-family:'Plus Jakarta Sans', sans-serif;
+    -webkit-font-smoothing:antialiased;
+    overflow-x:hidden;
+  }
+
+  h1,h2,h3{
+    font-family:'Fraunces', serif;
+    margin:0;
+    font-weight:500;
+    letter-spacing:-0.01em;
+  }
+
+  a{color:inherit; text-decoration:none;}
+  img{max-width:100%; display:block;}
+
+  .eyebrow{
+    font-family:'JetBrains Mono', monospace;
+    font-size:0.72rem;
+    letter-spacing:0.22em;
+    text-transform:uppercase;
+    color:var(--green-bright);
+    display:flex;
+    align-items:center;
+    gap:10px;
+  }
+  .eyebrow::before{
+    content:"";
+    width:22px;
+    height:1px;
+    background:var(--green-bright);
+    display:inline-block;
+  }
+  section .eyebrow.on-paper{ color:var(--green-mid); }
+  section .eyebrow.on-paper::before{ background:var(--green-mid); }
+
+  .wrap{
+    max-width:var(--max);
+    margin:0 auto;
+    padding:0 32px;
+  }
+
+  a:focus-visible, button:focus-visible, .navlink:focus-visible{
+    outline:2px solid var(--gold);
+    outline-offset:3px;
+  }
+
+  /* ---------- NAV ---------- */
+  header{
+    position:fixed;
+    top:0; left:0; right:0;
+    z-index:100;
+    padding:22px 0;
+    transition:background 0.35s ease, padding 0.35s ease, border-color 0.35s ease;
+    border-bottom:1px solid transparent;
+  }
+  header.scrolled{
+    background:rgba(10,14,12,0.86);
+    backdrop-filter:blur(10px);
+    padding:14px 0;
+    border-bottom:1px solid rgba(95,190,140,0.15);
+  }
+  .navbar{
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+  }
+  .brand{
+    display:flex;
+    align-items:center;
+    gap:12px;
+    font-family:'Fraunces', serif;
+    font-size:1.25rem;
+    letter-spacing:0.02em;
+  }
+  .brand small{
+    display:block;
+    font-family:'JetBrains Mono', monospace;
+    font-size:0.58rem;
+    letter-spacing:0.2em;
+    color:var(--text-muted);
+    font-weight:400;
+    margin-top:2px;
+  }
+  .navlinks{
+    display:flex;
+    gap:36px;
+    list-style:none;
+    font-size:0.88rem;
+  }
+  .navlinks a{
+    position:relative;
+    padding-bottom:4px;
+  }
+  .navlinks a::after{
+    content:"";
+    position:absolute;
+    left:0; bottom:0;
+    width:0; height:1px;
+    background:var(--green-bright);
+    transition:width 0.25s ease;
+  }
+  .navlinks a:hover::after{ width:100%; }
+
+  .navcta{
+    border:1px solid var(--green-bright);
+    color:var(--green-bright);
+    padding:9px 20px;
+    font-size:0.82rem;
+    border-radius:2px;
+    transition:background 0.25s ease, color 0.25s ease;
+  }
+  .navcta:hover{ background:var(--green-bright); color:var(--black); }
+
+  .burger{
+    display:none;
+    flex-direction:column;
+    gap:5px;
+    background:none;
+    border:none;
+    cursor:pointer;
+    padding:6px;
+  }
+  .burger span{
+    width:24px; height:1.5px; background:var(--text-light);
+  }
+
+  .mobile-nav{
+    position:fixed;
+    inset:0;
+    background:var(--black-soft);
+    z-index:99;
+    display:flex;
+    flex-direction:column;
+    align-items:center;
+    justify-content:center;
+    gap:32px;
+    font-family:'Fraunces', serif;
+    font-size:1.6rem;
+    transform:translateY(-100%);
+    transition:transform 0.4s ease;
+  }
+  .mobile-nav.open{ transform:translateY(0); }
+
+  /* ---------- HERO ---------- */
+  .hero{
+    position:relative;
+    min-height:100vh;
+    display:flex;
+    align-items:center;
+    padding-top:120px;
+    padding-bottom:80px;
+    background:radial-gradient(ellipse at 75% 20%, rgba(43,110,79,0.35), transparent 60%), var(--black);
+    overflow:hidden;
+  }
+  .archipelago{
+    position:absolute;
+    top:0; right:-8%;
+    height:100%;
+    width:70%;
+    opacity:0.5;
+    pointer-events:none;
+  }
+  .hero-inner{
+    position:relative;
+    z-index:2;
+    max-width:760px;
+  }
+  .hero h1{
+    font-size:clamp(2.4rem, 5.4vw, 4.4rem);
+    line-height:1.05;
+    margin:22px 0 26px;
+    color:var(--text-light);
+  }
+  .hero h1 em{
+    font-style:italic;
+    color:var(--green-bright);
+  }
+  .hero p.lead{
+    font-size:1.08rem;
+    line-height:1.7;
+    color:var(--text-muted);
+    max-width:560px;
+    margin-bottom:40px;
+  }
+  .cta-row{
+    display:flex;
+    gap:18px;
+    flex-wrap:wrap;
+    align-items:center;
+  }
+  .btn-primary{
+    background:var(--green-bright);
+    color:var(--black);
+    padding:15px 30px;
+    font-weight:600;
+    font-size:0.92rem;
+    border-radius:2px;
+    display:inline-block;
+    transition:transform 0.2s ease, box-shadow 0.2s ease;
+    border:1px solid var(--green-bright);
+  }
+  .btn-primary:hover{ transform:translateY(-2px); box-shadow:0 10px 24px rgba(95,190,140,0.25); }
+  .btn-ghost{
+    color:var(--text-light);
+    font-size:0.92rem;
+    padding:15px 6px;
+    border-bottom:1px solid rgba(233,238,229,0.35);
+  }
+  .btn-ghost:hover{ border-color:var(--text-light); }
+
+  .stat-strip{
+    display:flex;
+    gap:56px;
+    margin-top:70px;
+    flex-wrap:wrap;
+  }
+  .stat-strip .stat b{
+    display:block;
+    font-family:'Fraunces', serif;
+    font-size:2.1rem;
+    color:var(--text-light);
+    font-weight:500;
+  }
+  .stat-strip .stat span{
+    font-family:'JetBrains Mono', monospace;
+    font-size:0.68rem;
+    letter-spacing:0.14em;
+    text-transform:uppercase;
+    color:var(--text-muted);
+  }
+
+  /* ---------- SECTION GENERIC ---------- */
+  section{ padding:120px 0; position:relative; }
+  .section-paper{ background:var(--paper); color:var(--ink); }
+  .section-dark{ background:var(--black); }
+  .section-deep{ background:var(--green-deep); }
+
+  .divider-line{
+    height:1px;
+    background:linear-gradient(90deg, transparent, var(--green-mid) 15%, var(--gold) 50%, var(--green-mid) 85%, transparent);
+    opacity:0.5;
+  }
+
+  .grid-2{
+    display:grid;
+    grid-template-columns:1.1fr 0.9fr;
+    gap:70px;
+    align-items:start;
+  }
+
+  .section-head{
+    max-width:640px;
+    margin-bottom:20px;
+  }
+  .section-head h2{
+    font-size:clamp(1.8rem, 3.4vw, 2.6rem);
+    margin-top:16px;
+    line-height:1.15;
+  }
+  .section-paper .section-head p{ color:var(--ink-muted); }
+  .section-dark .section-head p, .section-deep .section-head p{ color:var(--text-muted); }
+  .section-head p{
+    margin-top:18px;
+    font-size:1.02rem;
+    line-height:1.75;
+    max-width:540px;
+  }
+
+  .about-card{
+    border:1px solid var(--paper-line);
+    padding:34px;
+    background:#fff;
+    border-radius:var(--radius);
+  }
+  .about-card ul{ list-style:none; margin:0; padding:0; }
+  .about-card li{
+    display:flex;
+    justify-content:space-between;
+    padding:16px 0;
+    border-bottom:1px solid var(--paper-line);
+    font-size:0.92rem;
+  }
+  .about-card li:last-child{ border-bottom:none; }
+  .about-card li b{ font-family:'Fraunces', serif; font-size:1.1rem; font-weight:500; }
+
+  /* ---------- PRACTICE AREAS ---------- */
+  .practice-grid{
+    display:grid;
+    grid-template-columns:repeat(3, 1fr);
+    gap:1px;
+    background:rgba(233,238,229,0.12);
+    margin-top:60px;
+    border:1px solid rgba(233,238,229,0.12);
+  }
+  .practice-card{
+    background:var(--green-deep);
+    padding:38px 32px;
+    transition:background 0.3s ease;
+  }
+  .practice-card:hover{ background:#0F2A1E; }
+  .practice-code{
+    font-family:'JetBrains Mono', monospace;
+    font-size:0.72rem;
+    letter-spacing:0.12em;
+    color:var(--gold);
+    border:1px solid rgba(199,162,76,0.4);
+    padding:4px 9px;
+    border-radius:2px;
+    display:inline-block;
+  }
+  .practice-card h3{
+    font-size:1.25rem;
+    margin:22px 0 12px;
+    color:var(--text-light);
+  }
+  .practice-card p{
+    font-size:0.92rem;
+    line-height:1.65;
+    color:var(--text-muted);
+    margin:0;
+  }
+
+  /* ---------- TEAM ---------- */
+  .team-grid{
+    display:grid;
+    grid-template-columns:repeat(4, 1fr);
+    gap:2px;
+    background:var(--paper-line);
+    margin-top:60px;
+    border:1px solid var(--paper-line);
+  }
+  .team-card{
+    background:var(--paper);
+    padding:34px 26px;
+    display:flex;
+    flex-direction:column;
+    align-items:flex-start;
+    gap:16px;
+  }
+  .monogram{
+    width:58px; height:58px;
+    border-radius:50%;
+    border:1px dashed var(--green-mid);
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    font-family:'Fraunces', serif;
+    font-size:1.15rem;
+    color:var(--green-mid);
+    position:relative;
+  }
+  .monogram::before{
+    content:"";
+    position:absolute;
+    inset:6px;
+    border-radius:50%;
+    border:1px solid rgba(43,110,79,0.25);
+  }
+  .team-card h3{
+    font-size:1.02rem;
+    line-height:1.35;
+    color:var(--ink);
+    font-weight:600;
+    font-family:'Plus Jakarta Sans', sans-serif;
+    letter-spacing:0.01em;
+  }
+  .team-card .role{
+    font-family:'JetBrains Mono', monospace;
+    font-size:0.68rem;
+    letter-spacing:0.1em;
+    text-transform:uppercase;
+    color:var(--green-mid);
+  }
+  .team-card .cred{
+    font-size:0.8rem;
+    color:var(--ink-muted);
+  }
+
+  /* ---------- CONTACT ---------- */
+  .contact-grid{
+    display:grid;
+    grid-template-columns:1fr 1fr;
+    gap:70px;
+  }
+  .contact-info dl{
+    margin:36px 0 0;
+  }
+  .contact-info dt{
+    font-family:'JetBrains Mono', monospace;
+    font-size:0.68rem;
+    letter-spacing:0.14em;
+    text-transform:uppercase;
+    color:var(--green-bright);
+    margin-top:26px;
+  }
+  .contact-info dd{
+    margin:8px 0 0;
+    font-size:1.02rem;
+    line-height:1.6;
+    color:var(--text-light);
+  }
+
+  form{ display:flex; flex-direction:column; gap:18px; }
+  .field label{
+    display:block;
+    font-size:0.78rem;
+    letter-spacing:0.05em;
+    text-transform:uppercase;
+    color:var(--text-muted);
+    margin-bottom:8px;
+    font-family:'JetBrains Mono', monospace;
+  }
+  .field input, .field textarea{
+    width:100%;
+    background:transparent;
+    border:1px solid rgba(233,238,229,0.28);
+    color:var(--text-light);
+    padding:13px 14px;
+    font-family:'Plus Jakarta Sans', sans-serif;
+    font-size:0.95rem;
+    border-radius:2px;
+  }
+  .field input:focus, .field textarea:focus{
+    outline:none;
+    border-color:var(--green-bright);
+  }
+  .field textarea{ resize:vertical; min-height:110px; }
+  .submit-btn{
+    background:var(--green-bright);
+    color:var(--black);
+    border:none;
+    padding:15px;
+    font-weight:600;
+    font-size:0.92rem;
+    cursor:pointer;
+    border-radius:2px;
+    margin-top:8px;
+    transition:opacity 0.2s ease;
+  }
+  .submit-btn:hover{ opacity:0.88; }
+  .form-note{
+    font-size:0.82rem;
+    color:var(--text-muted);
+    margin-top:4px;
+  }
+
+  /* ---------- FOOTER ---------- */
+  footer{
+    background:var(--black);
+    padding:60px 0 34px;
+    border-top:1px solid rgba(233,238,229,0.1);
+  }
+  .footer-top{
+    display:flex;
+    justify-content:space-between;
+    align-items:flex-start;
+    flex-wrap:wrap;
+    gap:30px;
+    padding-bottom:40px;
+  }
+  .footer-nav{
+    display:flex;
+    gap:30px;
+    list-style:none;
+    font-size:0.86rem;
+    padding:0;
+  }
+  .footer-bottom{
+    display:flex;
+    justify-content:space-between;
+    padding-top:26px;
+    border-top:1px solid rgba(233,238,229,0.08);
+    font-size:0.78rem;
+    color:var(--text-muted);
+    flex-wrap:wrap;
+    gap:10px;
+  }
+
+  /* reveal on scroll */
+  .reveal{
+    opacity:0;
+    transform:translateY(24px);
+    transition:opacity 0.7s ease, transform 0.7s ease;
+  }
+  .reveal.in{ opacity:1; transform:translateY(0); }
+
+  @media (max-width: 900px){
+    .navlinks, .navcta{ display:none; }
+    .burger{ display:flex; }
+    .grid-2, .contact-grid{ grid-template-columns:1fr; gap:40px; }
+    .practice-grid{ grid-template-columns:repeat(2,1fr); }
+    .team-grid{ grid-template-columns:repeat(2,1fr); }
+    .stat-strip{ gap:36px; }
+  }
+  @media (max-width: 560px){
+    .wrap{ padding:0 20px; }
+    section{ padding:80px 0; }
+    .practice-grid{ grid-template-columns:1fr; }
+    .team-grid{ grid-template-columns:1fr; }
+    .footer-top, .footer-bottom{ flex-direction:column; }
+  }
+</style>
+</head>
+<body>
+
+<header id="siteHeader">
+  <div class="wrap navbar">
+    <div class="brand">
+      <svg width="34" height="34" viewBox="0 0 34 34" fill="none">
+        <circle cx="17" cy="17" r="16" stroke="#5FBE8C" stroke-width="1"/>
+        <circle cx="17" cy="17" r="11" stroke="#C7A24C" stroke-width="0.6" stroke-dasharray="2 3"/>
+        <text x="17" y="22" text-anchor="middle" font-family="Fraunces, serif" font-size="15" fill="#E9EEE5">N</text>
+      </svg>
+      <div>
+        NUSANTARA
+        <small>KANTOR HUKUM</small>
+      </div>
+    </div>
+    <ul class="navlinks">
+      <li><a class="navlink" href="#tentang">Tentang</a></li>
+      <li><a class="navlink" href="#praktik">Praktik</a></li>
+      <li><a class="navlink" href="#tim">Tim</a></li>
+      <li><a class="navlink" href="#kontak">Kontak</a></li>
+    </ul>
+    <a href="#kontak" class="navcta">Konsultasi</a>
+    <button class="burger" id="burgerBtn" aria-label="Buka menu">
+      <span></span><span></span><span></span>
+    </button>
+  </div>
+</header>
+
+<div class="mobile-nav" id="mobileNav">
+  <a href="#tentang">Tentang</a>
+  <a href="#praktik">Praktik</a>
+  <a href="#tim">Tim</a>
+  <a href="#kontak">Kontak</a>
+</div>
+
+<!-- ================= HERO ================= -->
+<section class="hero">
+  <svg class="archipelago" viewBox="0 0 500 700" fill="none" xmlns="http://www.w3.org/2000/svg">
+    <path d="M60 90 C100 70, 140 100, 130 140 C120 180, 70 175, 55 140 C42 112, 30 105, 60 90Z" stroke="#5FBE8C" stroke-width="1"/>
+    <path d="M180 60 C240 40, 300 70, 290 120 C282 165, 210 170, 185 130 C165 98, 140 80, 180 60Z" stroke="#5FBE8C" stroke-width="1"/>
+    <path d="M110 250 C180 220, 260 245, 250 300 C240 350, 150 360, 105 320 C70 288, 60 275, 110 250Z" stroke="#5FBE8C" stroke-width="1"/>
+    <path d="M300 230 C360 210, 400 250, 380 300 C362 345, 300 340, 285 300 C272 265, 255 252, 300 230Z" stroke="#C7A24C" stroke-width="0.8"/>
+    <path d="M150 430 C220 400, 300 430, 280 490 C262 540, 170 545, 140 500 C114 460, 100 458, 150 430Z" stroke="#5FBE8C" stroke-width="1"/>
+    <path d="M330 460 C380 445, 420 480, 400 520 C384 555, 335 555, 320 520 C306 490, 292 478, 330 460Z" stroke="#5FBE8C" stroke-width="1"/>
+    <path d="M120 580 C170 560, 230 585, 215 630 C202 670, 135 672, 110 638 C90 608, 80 598, 120 580Z" stroke="#C7A24C" stroke-width="0.8"/>
+    <circle cx="95" cy="115" r="3" fill="#5FBE8C"/>
+    <circle cx="235" cy="95" r="3" fill="#5FBE8C"/>
+    <circle cx="175" cy="285" r="3" fill="#C7A24C"/>
+    <circle cx="340" cy="270" r="3" fill="#5FBE8C"/>
+    <circle cx="210" cy="465" r="3" fill="#5FBE8C"/>
+    <circle cx="370" cy="495" r="3" fill="#C7A24C"/>
+    <circle cx="165" cy="620" r="3" fill="#5FBE8C"/>
+    <path d="M95 115 L235 95 M235 95 L175 285 M175 285 L340 270 M175 285 L210 465 M210 465 L370 495 M210 465 L165 620" stroke="#5FBE8C" stroke-width="0.5" stroke-dasharray="3 5" opacity="0.6"/>
+  </svg>
+  <div class="wrap hero-inner">
+    <p class="eyebrow">KANTOR HUKUM NUSANTARA · SEJAK NIAT UNTUK ADIL</p>
+    <h1>Menegakkan keadilan,<br>menjaga <em>kepercayaan</em>.</h1>
+    <p class="lead">Kami adalah firma advokat dan konsultan hukum yang mendampingi individu maupun korporasi di seluruh Indonesia — dengan pendekatan yang cermat, independen, dan berorientasi pada solusi nyata.</p>
+    <div class="cta-row">
+      <a href="#kontak" class="btn-primary">Konsultasi Sekarang</a>
+      <a href="#praktik" class="btn-ghost">Lihat Bidang Praktik →</a>
+    </div>
+    <div class="stat-strip">
+      <div class="stat"><b>07</b><span>Advokat Aktif</span></div>
+      <div class="stat"><b>06</b><span>Bidang Praktik</span></div>
+      <div class="stat"><b>100%</b><span>Kerahasiaan Klien</span></div>
+    </div>
+  </div>
+</section>
+
+<!-- ================= TENTANG ================= -->
+<section class="section-paper" id="tentang">
+  <div class="wrap grid-2 reveal">
+    <div class="section-head">
+      <p class="eyebrow on-paper">TENTANG KAMI</p>
+      <h2>Berpijak pada semangat Nusantara — satu asas, beragam wilayah.</h2>
+      <p>Nama Nusantara kami pilih sebagai pengingat akan cakupan dan tanggung jawab kami: mendampingi klien dari berbagai latar belakang dan wilayah dengan satu standar yang sama — teliti, independen, dan berintegritas. Setiap perkara kami tangani dengan riset yang mendalam dan komunikasi yang jujur kepada klien mengenai posisi hukum mereka.</p>
+      <p>Kami percaya bahwa kepastian hukum adalah hak setiap orang, bukan kemewahan. Karena itu, tim kami bekerja secara kolektif, saling melengkapi keahlian, agar setiap klien mendapat pendampingan yang menyeluruh dari konsultasi awal hingga penyelesaian perkara.</p>
+    </div>
+    <div class="about-card">
+      <ul>
+        <li><b>Litigasi &amp; Non-Litigasi</b><span>Pendampingan penuh</span></li>
+        <li><b>Konsultasi Independen</b><span>Tanpa konflik kepentingan</span></li>
+        <li><b>Kerahasiaan Klien</b><span>Prinsip utama kami</span></li>
+        <li><b>Jangkauan Nasional</b><span>Seluruh Indonesia</span></li>
+      </ul>
+    </div>
+  </div>
+</section>
+
+<!-- ================= PRAKTIK ================= -->
+<section class="section-deep" id="praktik">
+  <div class="wrap reveal">
+    <div class="section-head">
+      <p class="eyebrow">BIDANG PRAKTIK</p>
+      <h2>Pendampingan hukum yang menyeluruh, di setiap bidang yang Anda butuhkan.</h2>
+      <p>Enam bidang inti tempat kami paling sering hadir mendampingi klien — dari sengketa personal hingga urusan korporasi.</p>
+    </div>
+    <div class="practice-grid">
+      <div class="practice-card">
+        <span class="practice-code">PDT</span>
+        <h3>Hukum Perdata</h3>
+        <p>Sengketa wanprestasi, ganti rugi, perjanjian, dan gugatan perdata lainnya di tingkat pengadilan negeri hingga kasasi.</p>
+      </div>
+      <div class="practice-card">
+        <span class="practice-code">PID</span>
+        <h3>Hukum Pidana</h3>
+        <p>Pendampingan tersangka, terdakwa, maupun pelapor sejak tahap penyelidikan hingga persidangan.</p>
+      </div>
+      <div class="practice-card">
+        <span class="practice-code">BSN</span>
+        <h3>Hukum Bisnis &amp; Korporasi</h3>
+        <p>Legalitas usaha, penyusunan kontrak, restrukturisasi, dan penyelesaian sengketa bisnis.</p>
+      </div>
+      <div class="practice-card">
+        <span class="practice-code">TNK</span>
+        <h3>Hukum Ketenagakerjaan</h3>
+        <p>Perselisihan hubungan industrial, PHK, dan negosiasi hak-hak pekerja maupun pemberi kerja.</p>
+      </div>
+      <div class="practice-card">
+        <span class="practice-code">KLG</span>
+        <h3>Hukum Keluarga</h3>
+        <p>Perceraian, hak asuh anak, pembagian harta bersama, dan sengketa waris.</p>
+      </div>
+      <div class="practice-card">
+        <span class="practice-code">TNH</span>
+        <h3>Hukum Pertanahan &amp; Properti</h3>
+        <p>Sengketa lahan, jual-beli properti, serta legalitas dan sertifikasi tanah.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ================= TIM ================= -->
+<section class="section-paper" id="tim">
+  <div class="wrap reveal">
+    <div class="section-head">
+      <p class="eyebrow on-paper">TIM KAMI</p>
+      <h2>Tujuh advokat, satu komitmen yang sama terhadap klien.</h2>
+      <p>Tim Kantor Hukum Nusantara terdiri dari advokat dan konsultan hukum yang bekerja secara kolektif untuk setiap perkara yang kami tangani.</p>
+    </div>
+    <div class="team-grid">
+      <div class="team-card">
+        <div class="monogram">NS</div>
+        <h3>Nabila Syakirah, S.H., M.H.</h3>
+        <span class="role">Advokat</span>
+      </div>
+      <div class="team-card">
+        <div class="monogram">DH</div>
+        <h3>Divia Nur Hanifah, S.H.</h3>
+        <span class="role">Advokat</span>
+      </div>
+      <div class="team-card">
+        <div class="monogram">PW</div>
+        <h3>Panji Aulia Widyadhana, S.H., M.H.</h3>
+        <span class="role">Advokat</span>
+      </div>
+      <div class="team-card">
+        <div class="monogram">RF</div>
+        <h3>Reishal Farras Fahreza, S.H., M.H.</h3>
+        <span class="role">Advokat</span>
+      </div>
+      <div class="team-card">
+        <div class="monogram">AJ</div>
+        <h3>Anisa Oktapiani Japni, S.H.</h3>
+        <span class="role">Advokat</span>
+      </div>
+      <div class="team-card">
+        <div class="monogram">AP</div>
+        <h3>Moch Altriyanda Baeni Permana, S.H.</h3>
+        <span class="role">Advokat</span>
+      </div>
+      <div class="team-card">
+        <div class="monogram">SP</div>
+        <h3>Shuhba Khairil Padhli, S.H., M.H.</h3>
+        <span class="role">Advokat</span>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ================= KONTAK ================= -->
+<section class="section-dark" id="kontak">
+  <div class="wrap contact-grid reveal">
+    <div class="contact-info">
+      <p class="eyebrow">KONTAK</p>
+      <h2>Diskusikan perkara Anda bersama kami.</h2>
+      <p style="margin-top:18px; color:var(--text-muted); line-height:1.7; max-width:480px;">Sampaikan kronologi singkat perkara Anda melalui formulir, atau hubungi kami langsung melalui kontak di bawah ini.</p>
+      <dl>
+        <dt>Alamat Kantor</dt>
+        <dd>Jl. Contoh Raya No. 00, Jakarta Selatan, Indonesia<br><span style="color:var(--text-muted); font-size:0.85rem;">(mohon sesuaikan dengan alamat kantor sebenarnya)</span></dd>
+        <dt>Telepon</dt>
+        <dd>(021) 000-0000</dd>
+        <dt>Surel</dt>
+        <dd>halo@nusantaralaw.co.id</dd>
+        <dt>Jam Operasional</dt>
+        <dd>Senin – Jumat, 09.00 – 17.00 WIB</dd>
+      </dl>
+    </div>
+    <form id="contactForm">
+      <div class="field">
+        <label for="name">Nama Lengkap</label>
+        <input id="name" type="text" required placeholder="Nama Anda">
+      </div>
+      <div class="field">
+        <label for="email">Surel</label>
+        <input id="email" type="email" required placeholder="nama@email.com">
+      </div>
+      <div class="field">
+        <label for="message">Ringkasan Perkara</label>
+        <textarea id="message" required placeholder="Ceritakan secara singkat perkara yang Anda hadapi..."></textarea>
+      </div>
+      <button type="submit" class="submit-btn">Kirim Pesan</button>
+      <p class="form-note">Formulir ini bersifat demonstrasi tampilan — hubungkan ke sistem pengiriman pesan Anda sendiri sebelum situs digunakan.</p>
+    </form>
+  </div>
+</section>
+
+<footer>
+  <div class="wrap">
+    <div class="footer-top">
+      <div class="brand">
+        <svg width="30" height="30" viewBox="0 0 34 34" fill="none">
+          <circle cx="17" cy="17" r="16" stroke="#5FBE8C" stroke-width="1"/>
+          <text x="17" y="22" text-anchor="middle" font-family="Fraunces, serif" font-size="14" fill="#E9EEE5">N</text>
+        </svg>
+        <div>NUSANTARA<small>KANTOR HUKUM</small></div>
+      </div>
+      <ul class="footer-nav">
+        <li><a href="#tentang">Tentang</a></li>
+        <li><a href="#praktik">Praktik</a></li>
+        <li><a href="#tim">Tim</a></li>
+        <li><a href="#kontak">Kontak</a></li>
+      </ul>
+    </div>
+    <div class="footer-bottom">
+      <span>© 2026 Kantor Hukum Nusantara. Seluruh hak cipta dilindungi.</span>
+      <span>Dibangun dengan komitmen terhadap keadilan.</span>
+    </div>
+  </div>
+</footer>
+
+<script>
+  const header = document.getElementById('siteHeader');
+  window.addEventListener('scroll', () => {
+    header.classList.toggle('scrolled', window.scrollY > 40);
+  });
+
+  const burger = document.getElementById('burgerBtn');
+  const mobileNav = document.getElementById('mobileNav');
+  burger.addEventListener('click', () => mobileNav.classList.toggle('open'));
+  mobileNav.querySelectorAll('a').forEach(a => a.addEventListener('click', () => mobileNav.classList.remove('open')));
+
+  const revealEls = document.querySelectorAll('.reveal');
+  const io = new IntersectionObserver((entries) => {
+    entries.forEach(e => { if(e.isIntersecting){ e.target.classList.add('in'); io.unobserve(e.target); } });
+  }, { threshold: 0.15 });
+  revealEls.forEach(el => io.observe(el));
+
+  document.getElementById('contactForm').addEventListener('submit', (e) => {
+    e.preventDefault();
+    alert('Terima kasih. Ini tampilan demonstrasi — hubungkan formulir ini ke sistem pengiriman pesan Anda sendiri.');
+    e.target.reset();
+  });
+</script>
+
+</body>
+</html>
